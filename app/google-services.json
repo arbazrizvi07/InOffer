@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "77862466350",
+    "firebase_url": "https://infraoffer.firebaseio.com",
+    "project_id": "infraoffer",
+    "storage_bucket": "infraoffer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77862466350:android:eff9dfe5d76201f0",
+        "android_client_info": {
+          "package_name": "com.infrasoft.infraoffer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "77862466350-1l7dcivq7e471obi49s5e5srsso188kk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTteir4wUFJdgh3q2IPxiP7R7kn8WjqCw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
