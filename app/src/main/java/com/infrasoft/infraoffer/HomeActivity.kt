@@ -1,8 +1,10 @@
 package com.infrasoft.infraoffer
 
 import android.Manifest
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -10,6 +12,7 @@ import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -35,13 +38,23 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         initToolbarAndNavigation()
         getUserLocation()
+    }
+
+    private val listener = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val data = intent.getStringExtra("token")
+            if (isNotRegister()) {
+                registerUser(latitude, longitude)
+            }
+        }
     }
 
     private fun initToolbarAndNavigation() {
@@ -78,6 +91,16 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(this).registerReceiver(listener, IntentFilter("Custom_action"))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(listener)
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.offer_list -> {
@@ -106,7 +129,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionRationaleShouldBeShown(
                     permissions: MutableList<com.karumi.dexter.listener.PermissionRequest>?,
-                    token: PermissionToken?) {
+                    token: PermissionToken?
+                ) {
 
                 }
 
@@ -121,14 +145,19 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun getUserLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             requestSMSPermission()
         } else {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
-                    if(isNotRegister()) {
-                        registerUser(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
-                    }
+                    longitude = location?.longitude ?: 0.0
+                    latitude = location?.latitude ?: 0.0
+                    if (FirebaseInstanceId.getInstance().token != null && isNotRegister())
+                        registerUser(latitude, longitude)
                 }
         }
     }
@@ -138,6 +167,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val status = prefs.getBoolean("is_register", false)
         return !status
     }
+
 
     fun registerUser(lat: Double, lon: Double) {
         var request = Registration()
@@ -182,7 +212,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 for (location in locationResult.locations) {
-
+                    longitude = location?.longitude ?: 0.0
+                    latitude = location?.latitude ?: 0.0
                 }
             }
         }

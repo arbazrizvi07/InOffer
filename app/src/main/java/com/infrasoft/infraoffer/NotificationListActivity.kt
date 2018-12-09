@@ -28,10 +28,13 @@ class NotificationListActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
+                        if (document.data.get("offerid") == null)
+                            break
+
                         val offer = Offer(
-                            document.data.get("offerId") as String,
-                            document.data.get("dealname") as String,
-                            document.data.get("discription") as String
+                            document.data?.get("offerid") as String,
+                            document.data?.get("dealname") as String,
+                            document.data?.get("discription") as String
                         )
                         list.add(offer)
                     }

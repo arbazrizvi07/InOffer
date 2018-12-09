@@ -20,7 +20,7 @@ class MyAdapter(private val myDataset: ArrayList<Offer>, val context: Context) :
         holder.view.offer_text.text = myDataset.get(position).dealname
         holder.view.list_item.setOnClickListener {
             var intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra("id", myDataset.get(position).offerId)
+            intent.putExtra("id", myDataset.get(position).offerid)
             //context.startActivity(intent)
         }
 

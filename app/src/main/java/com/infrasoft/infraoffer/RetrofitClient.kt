@@ -46,7 +46,7 @@ class RetrofitClient private constructor() {
     }
 
     companion object {
-        val BASE_URL = "http://155.248.230.176:8089/customer/"
+        val BASE_URL = "http://115.248.230.176:8089/customer/"
         private var sInstance: RetrofitClient? = null
 
         fun create() {
