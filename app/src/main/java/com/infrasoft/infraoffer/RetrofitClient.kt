@@ -4,13 +4,19 @@ import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import okhttp3.logging.HttpLoggingInterceptor
+
+
 
 class RetrofitClient private constructor() {
     private var retrofit: Retrofit? = null
 
 
     init {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
         val httpClient = OkHttpClient.Builder()
+        httpClient.addInterceptor(interceptor)
         retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(httpClient.build())
@@ -32,15 +38,15 @@ class RetrofitClient private constructor() {
             val request = requestBuilder.build()
             val response = chain.proceed(request)
 
-            val rawJson = response.body().string().replace("{\"d\":null}", "")
+            val rawJson = response.body()?.string()?.replace("{\"d\":null}", "")
             //logResponse(response, rawJson);
             return response.newBuilder()
-                .body(ResponseBody.create(response.body().contentType(), rawJson)).build()
+                .body(ResponseBody.create(response.body()?.contentType(), rawJson)).build()
         }
     }
 
     companion object {
-        val BASE_URL = "http://172.25.2.234:8089/customer/"
+        val BASE_URL = "http://155.248.230.176:8089/customer/"
         private var sInstance: RetrofitClient? = null
 
         fun create() {

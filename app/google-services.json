@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "77862466350-vl4tsp7tundql291i5ikutnk0oqhjkns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.infrasoft.infraoffer",
+            "certificate_hash": "e5072dabea1a8b3099bc6d85eca9da4d23bab4e9"
+          }
+        },
+        {
+          "client_id": "77862466350-o862od76nf69fla54vnpta8eb4ak40q1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.infrasoft.infraoffer",
+            "certificate_hash": "04d24ffc230337e1914c4bfbc1213f96d5946866"
+          }
+        },
+        {
           "client_id": "77862466350-1l7dcivq7e471obi49s5e5srsso188kk.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "77862466350-1l7dcivq7e471obi49s5e5srsso188kk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

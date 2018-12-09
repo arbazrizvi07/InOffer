@@ -1,8 +1,9 @@
 package com.infrasoft.infraoffer
 
 import android.app.Application
+import android.support.multidex.MultiDexApplication
 
-class InfraOfferApplication : Application() {
+class InfraOfferApplication : MultiDexApplication() {
 
     private var appInstance: InfraOfferApplication? = null
 

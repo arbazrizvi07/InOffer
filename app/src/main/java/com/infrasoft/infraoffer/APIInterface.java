@@ -8,4 +8,7 @@ public interface APIInterface {
 
     @POST("registration")
     Call<RegistrationResponse> registration(@Body Registration request);
+
+    @POST("offerDetails")
+    Call<RegistrationResponse> getOfferDetails(@Body OfferDetailRequest request);
 }

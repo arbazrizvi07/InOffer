@@ -2,9 +2,11 @@ package com.infrasoft.infraoffer
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -67,7 +69,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_notification -> return true
+            R.id.action_notification -> {
+                val intent = Intent(this, NotificationListActivity::class.java)
+                startActivity(intent)
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -75,6 +81,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.offer_list -> {
+                val intent = Intent(this, NotificationListActivity::class.java)
+                startActivity(intent)
             }
             R.id.latest_offer -> {
 
@@ -98,15 +106,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionRationaleShouldBeShown(
                     permissions: MutableList<com.karumi.dexter.listener.PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
+                    token: PermissionToken?) {
 
                 }
 
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        getUserLocation()
-                    } else if (report.isAnyPermissionPermanentlyDenied) {
                         getUserLocation()
                     }
                 }
@@ -116,18 +121,22 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun getUserLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestSMSPermission()
         } else {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
-                    registerUser(location!!.latitude, location!!.longitude)
+                    if(isNotRegister()) {
+                        registerUser(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
+                    }
                 }
         }
+    }
+
+    private fun isNotRegister(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val status = prefs.getBoolean("is_register", false)
+        return !status
     }
 
     fun registerUser(lat: Double, lon: Double) {
@@ -141,6 +150,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         call.enqueue(object : retrofit2.Callback<RegistrationResponse> {
             override fun onResponse(call: Call<RegistrationResponse>, response: Response<RegistrationResponse>) {
                 Toast.makeText(this@HomeActivity, "Location Saved", Toast.LENGTH_LONG).show()
+                val prefs = PreferenceManager.getDefaultSharedPreferences(this@HomeActivity)
+                val editor = prefs.edit()
+                editor.putBoolean("is_register", true)
+                editor.apply()
             }
 
             override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
